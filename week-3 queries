@@ -1,0 +1,129 @@
+create database skanda_bank;
+
+use skanda_bank;
+
+//query 1
+
+create table branch(
+branchname varchar(20) primary key,
+branchcity varchar(20),
+assets double);
+
+create table bankaccount(
+accno int,
+branchname varchar(20),
+balance double,
+primary key(accno,branchname),
+foreign key (branchname) references branch(branchname));
+
+create table bankcustomer(
+customername varchar(50) primary key,
+customerstreet varchar(50),
+customercity varchar(50));
+
+create table depositor(
+customername varchar(20),
+accno int,
+primary key(customername, accno),
+foreign key (customername) references bankcustomer(customername),
+foreign key(accno) references bankaccount(accno));
+
+create table loan(
+loannumber int,
+branchname varchar(20),
+amount double,
+primary key(loannumber, branchname),
+foreign key (branchname) references branch(branchname));
+
+create table loancustomer(
+  loannumber int,
+  customername varchar(50),
+  primary key(loannumber, customername),
+  foreign key(loannumber) references loan(loannumber),
+  foreign key(customername) references bankcustomer(customername)
+);
+
+//query 2
+
+insert into branch
+values('sbi_chamrajpet','bangalore',50000),
+('sbi_residencyroad','bangalore',10000),
+('sbi_shivajinagar','bombay',20000),
+('sbi_parlimentroad','delhi',10000),
+('sbi_jantarmantar','delhi',20000);
+
+select * from branch;
+
+insert into bankaccount
+values(1,'sbi_chamrajpet',2000),
+(2,'sbi_residencyroad',5000),
+(3,'sbi_shivajinagar',6000),
+(4,'sbi_parlimentroad',9000),
+(5,'sbi_jantarmantar',8000),
+(6,'sbi_residencyroad',4000),
+(7,'sbi_chamrajpet',6000),
+(8,'sbi_chamrajpet',4000),
+(9,'sbi_chamrajpet',8000);
+
+select * from bankaccount;
+
+insert into bankcustomer
+values('avinash','bull temple road','bangalore'),
+('dinesh','bannergatta road','bangalore'),
+('mohan','national college road','bangalore'),
+('nikil','akbar road','delhi'),
+('ravi','prithviraj road','delhi');
+
+select * from bankcustomer;
+
+insert into depositor
+values('avinash',1),
+('dinesh',2),
+('mohan',3),
+('nikil',4),
+('ravi',5),
+('avinash',6),
+('dinesh',7),
+('nikil',8),
+('nikil',9);
+
+select * from depositor;
+
+insert into loan
+values(1,'sbi_chamrajpet',1000),
+(2,'sbi_residencyroad',2000),
+(3,'sbi_shivajinagar',3000),
+(4,'sbi_parlimentroad',4000),
+(5,'sbi_jantarmantar',5000);
+
+select * from loan;
+
+INSERT INTO loancustomer (loannumber, customername) VALUES
+(1, 'avinash'),
+(2, 'dinesh'),
+(3, 'mohan'),
+(4, 'nikil'),
+(5, 'ravi');
+
+select * from loancustomer;
+
+//query 3
+
+select branchname AS 'Branch Name', assets / 100000.0 AS 'Assets in Lakhs'
+from branch;
+
+//query 4
+
+SELECT a.customername, b.branchname, COUNT(*) AS num_accounts
+FROM depositor a, bankaccount b
+where a.accno = b.accno
+GROUP BY a.customername, b.branchname
+HAVING COUNT(*) >= 2;
+
+//query 5
+
+create view summary as 
+select branchname, sum(amount) as total_loan_amount
+from loan
+group by branchname;
+select * from summary;
