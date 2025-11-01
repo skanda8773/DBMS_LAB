@@ -1,0 +1,110 @@
+create database employee_sk;
+
+use employee_sk;
+
+//query 1
+
+CREATE TABLE dept(
+deptno INT PRIMARY KEY,
+dname VARCHAR(50),
+dloc VARCHAR(50));
+
+CREATE TABLE employee (
+empno INT PRIMARY KEY,
+ename VARCHAR(50),
+mgr_no INT,
+hiredate DATE,
+sal DECIMAL(10,2),
+deptno INT,
+FOREIGN KEY (deptno) REFERENCES dept(deptno));
+
+CREATE TABLE project(
+pno INT PRIMARY KEY,
+ploc VARCHAR(50),
+pname VARCHAR(50));
+
+CREATE TABLE incentives (
+empno INT,
+incentive_date DATE,
+incentive_amount DECIMAL(10,2),
+primary key(empno,incentive_date),
+FOREIGN KEY (empno) REFERENCES EMPLOYEE(empno));
+
+CREATE TABLE assigned_to (
+empno INT,
+pno INT,
+job_role varchar(50),
+primary key(empno,pno),
+FOREIGN KEY (empno) REFERENCES EMPLOYEE(empno),
+FOREIGN KEY (pno) REFERENCES PROJECT(pno));
+
+//query 2
+
+INSERT INTO dept VALUES
+(1, 'IT', 'bengaluru'),
+(2, 'HR', 'mysuru'),
+(3, 'finance', 'hyderabad'),
+(4, 'admin', 'chennai'),
+(5, 'marketing', 'pune');
+
+select * from dept;
+
+INSERT INTO employee VALUES
+(101, 'alice', 201, '2022-01-10', 60000.00, 1),
+(102, 'bBob', 202, '2023-03-15', 30000.00, 2),
+(103, 'charlie',201, '2021-07-01', 80000.00, 1),
+(104, 'diana', 203, '2022-11-20', 55000.00, 3),
+(105, 'ethan', 201, '2020-05-05', 150000.00, 4);
+
+select * from employee;
+
+INSERT INTO project VALUES
+(1, 'bengaluru', 'apollo'),
+(2, 'mysuru', 'orion'),
+(3, 'hyderabad', 'titan'),
+(4, 'pune', 'vega'),
+(5, 'chennai', 'helios');
+
+select * from project;
+
+INSERT INTO incentives VALUES
+(101, '2023-01-01', 5000.00),
+(103, '2023-06-15', 7000.00),
+(104, '2023-03-10', 4500.00),
+(105, '2022-12-25', 10000.00),
+(101, '2023-08-01', 3000.00);
+
+select * from incentives;
+
+INSERT INTO assigned_to VALUES
+(101, 1, 'data analyst'),
+(102, 2, 'HR assistant'),
+(103, 3, 'finance manager'),
+(104, 4, 'developer'),
+(105, 5, 'administrator');
+
+select * from assigned_to;
+
+//query 3
+
+select a.empno
+from assigned_to a,project p
+where a.pno=p.pno and p.ploc in('bengaluru','mysuru','hyderabad');
+
+//query 4
+
+SELECT e.empno
+FROM employee e
+WHERE empno NOT IN (SELECT i.empno FROM incentives i);
+
+//query 5
+
+SELECT  e.empno,e.ename,
+        d.dname, d.dloc AS dept_location,
+        a.job_role, p.ploc AS project_location
+FROM employee e, dept d, assigned_to a, project p
+WHERE e.deptno = d.deptno AND 
+      e.empno = a.empno AND 
+	  a.pno = p.pno AND 
+      d.dloc= p.ploc;
+
