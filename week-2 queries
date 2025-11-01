@@ -1,0 +1,42 @@
+//query 1
+
+select * from car order by year asc;
+
+//query2
+
+select count(report_num) as CNT 
+from car c,participated p 
+where c.reg_num=p.reg_num and model='Lancer';
+
+//query 3
+
+select count(distinct driver_id) as CNT 
+from participated a, accident b 
+where a.report_num= b.report_num and year(b.accident_date)=2008;
+
+//query 4
+
+SELECT * FROM participated
+ORDER BY damage_amount DESC;
+
+//query 5
+
+SELECT AVG(damage_amount) 
+FROM participated;
+
+//query 6
+
+DELETE FROM participated
+WHERE damage_amount<(SELECT AVG (damage_amount) FROM (participated)); 
+
+//query 7
+
+SELECT name 
+FROM person A, participated B 
+WHERE A.driver_id = B.driver_id 
+AND damage_amount>(SELECT AVG(damage_amount) FROM participated);
+
+//query 8
+
+SELECT MAX(damage_amount)
+FROM participated;
