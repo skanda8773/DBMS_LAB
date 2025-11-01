@@ -3,7 +3,6 @@ create database skanda_bank;
 use skanda_bank;
 
 //query 1
-
 create table branch(
 branchname varchar(20) primary key,
 branchcity varchar(20),
@@ -35,22 +34,13 @@ amount double,
 primary key(loannumber, branchname),
 foreign key (branchname) references branch(branchname));
 
-create table loancustomer(
-  loannumber int,
-  customername varchar(50),
-  primary key(loannumber, customername),
-  foreign key(loannumber) references loan(loannumber),
-  foreign key(customername) references bankcustomer(customername)
-);
-
 //query 2
-
 insert into branch
 values('sbi_chamrajpet','bangalore',50000),
-('sbi_residencyroad','bangalore',10000),
-('sbi_shivajinagar','bombay',20000),
-('sbi_parlimentroad','delhi',10000),
-('sbi_jantarmantar','delhi',20000);
+('sbi_residencyroad','bangalore',60000),
+('sbi_shivajinagar','bombay',75000),
+('sbi_parlimentroad','delhi',70000),
+('sbi_jantarmantar','delhi',70000);
 
 select * from branch;
 
@@ -63,7 +53,7 @@ values(1,'sbi_chamrajpet',2000),
 (6,'sbi_residencyroad',4000),
 (7,'sbi_chamrajpet',6000),
 (8,'sbi_chamrajpet',4000),
-(9,'sbi_chamrajpet',8000);
+(9, 'sbi_chamrajpet', 3000);
 
 select * from bankaccount;
 
@@ -72,7 +62,8 @@ values('avinash','bull temple road','bangalore'),
 ('dinesh','bannergatta road','bangalore'),
 ('mohan','national college road','bangalore'),
 ('nikil','akbar road','delhi'),
-('ravi','prithviraj road','delhi');
+('ravi','prithviraj road','delhi'),
+('suresh', 'ring road', 'bangalore');
 
 select * from bankcustomer;
 
@@ -85,7 +76,7 @@ values('avinash',1),
 ('avinash',6),
 ('dinesh',7),
 ('nikil',8),
-('nikil',9);
+('avinash',9);
 
 select * from depositor;
 
@@ -94,34 +85,23 @@ values(1,'sbi_chamrajpet',1000),
 (2,'sbi_residencyroad',2000),
 (3,'sbi_shivajinagar',3000),
 (4,'sbi_parlimentroad',4000),
-(5,'sbi_jantarmantar',5000);
+(5,'sbi_jantarmantar',5000),
+(6, 'sbi_chamrajpet', 3500);
 
 select * from loan;
 
-INSERT INTO loancustomer (loannumber, customername) VALUES
-(1, 'avinash'),
-(2, 'dinesh'),
-(3, 'mohan'),
-(4, 'nikil'),
-(5, 'ravi');
-
-select * from loancustomer;
-
 //query 3
-
 select branchname AS 'Branch Name', assets / 100000.0 AS 'Assets in Lakhs'
 from branch;
 
 //query 4
-
-SELECT a.customername, b.branchname, COUNT(*) AS num_accounts
-FROM depositor a, bankaccount b
-where a.accno = b.accno
-GROUP BY a.customername, b.branchname
+SELECT d.customername, ba.branchname, COUNT(*) AS num_accounts
+FROM depositor d, bankaccount ba
+where d.accno = ba.accno
+GROUP BY d.customername, ba.branchname
 HAVING COUNT(*) >= 2;
 
 //query 5
-
 create view summary as 
 select branchname, sum(amount) as total_loan_amount
 from loan
