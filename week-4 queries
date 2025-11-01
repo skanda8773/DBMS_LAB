@@ -1,0 +1,58 @@
+//query 1
+
+SELECT bc.customername
+FROM bankcustomer bc, depositor d, bankaccount ba, branch b
+WHERE bc.customername = d.customername
+  AND d.accno = ba.accno
+  AND ba.branchname = b.branchname
+  AND b.branchcity = 'bangalore'
+GROUP BY bc.customername
+HAVING COUNT(DISTINCT ba.branchname) = (
+    SELECT COUNT(*)
+    FROM branch
+    WHERE branchcity = 'bangalore'
+);
+
+//query 2
+
+SELECT DISTINCT lc.customername
+FROM loancustomer lc
+WHERE lc.customername NOT IN (
+    SELECT d.customername
+    FROM depositor d
+);
+
+//query 3
+
+SELECT DISTINCT lc.customername, b.branchcity
+FROM loancustomer lc, depositor d, bankaccount ba, loan l, branch b
+WHERE lc.customername = d.customername
+  AND d.accno = ba.accno
+  AND lc.loannumber = l.loannumber
+  AND ba.branchname = b.branchname
+  AND l.branchname = b.branchname
+  AND b.branchcity = 'bangalore';
+
+//query 4
+
+SELECT branchname
+FROM branch
+WHERE assets > ALL (
+    SELECT assets
+    FROM branch
+    WHERE branchcity = 'bangalore'
+);          
+
+//query 5
+DELETE FROM bankaccount
+WHERE branchname IN (
+    SELECT branchname 
+    FROM branch 
+    WHERE branchcity = 'bombay'
+);
+select * from bankaccount;
+
+//query 6
+UPDATE bankaccount
+SET balance = balance * 1.05;
+select * from bankaccount;
